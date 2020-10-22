@@ -135,7 +135,11 @@ Username: {$authorUsername}<br />
 <br />
 If you have any questions, please contact me. Thank you for considering this journal as a venue for your work.<br />
 <br />
-{$editorialContactSignature}]]></body>
+{$editorialContactSignature}<br />
+<br />
+During submission you accepted the following terms and conditions:<br />
+{$accepted_submissionChecklist}<br />
+{$accepted_privacyStatement}]]></body>
 		<description>This email, when enabled, is automatically sent to an author when he or she completes the process of submitting a manuscript to the journal. It provides information about tracking the submission through the process and thanks the author for the submission.</description>
 	</email_text>
 	<email_text key="SUBMISSION_ACK_NOT_USER">

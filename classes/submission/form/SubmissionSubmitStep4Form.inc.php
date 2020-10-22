@@ -32,7 +32,7 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 	 * Save changes to submission.
 	 * @return int the submission ID
 	 */
-	function execute() {
+	function execute(...$functionArgs) {
 		parent::execute();
 
 		$submission = $this->submission;
@@ -88,6 +88,9 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 				'authorUsername' => $user->getUsername(),
 				'editorialContactSignature' => $context->getSetting('contactName'),
 				'submissionUrl' => $router->url($request, null, 'authorDashboard', 'submission', $submission->getId()),
+			    //TODO RS see also mail template locale\en_US
+			    'accepted_submissionChecklist' => $context->getLocalizedSetting('accepted_submissionChecklist', $context->getPrimaryLocale()),
+			    'accepted_privacyStatement' => $context->getLocalizedSetting('accepted_privacyStatement', $context->getPrimaryLocale())
 			));
 
 			$authorMail->assignParams(array(
