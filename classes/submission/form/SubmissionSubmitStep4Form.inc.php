@@ -86,9 +86,15 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 			//prepare submission checklist array for mail template
 			$submissionChecklist = $submission->getLocalizedData('accepted_submissionChecklist', $context->getPrimaryLocale());
 			$submissionChecklistHTML = '';
-			foreach ($submissionChecklist as $value) {
+			$order = array_column($submissionChecklist, 'order');
+			$content = array_column($submissionChecklist, 'content');
+			array_multisort($order,$content);
+			foreach ($content as $value) {
 			    $submissionChecklistHTML .= '<li>'.$value.'</li>';
 			}
+			
+			error_log("RS_DEBUG:".basename(__FILE__).":".__FUNCTION__.":??? ".print_r($submissionChecklist,true));
+			error_log("RS_DEBUG:".basename(__FILE__).":".__FUNCTION__.":??? ".print_r($submissionChecklistHTML,true));
 
 			$mail->assignParams(array(
 				'authorName' => $user->getFullName(),
