@@ -142,7 +142,7 @@ During submission you accepted the following terms and conditions:<br />
 <ul>
     {$accepted_submissionChecklist}
 </ul>
-<br />
+{$accepted_copyrightNotice}
 <br /><u>Privacy Statement</u><br />
 {$accepted_privacyStatement}]]></body>
 		<description>This email, when enabled, is automatically sent to an author when he or she completes the process of submitting a manuscript to the journal. It provides information about tracking the submission through the process and thanks the author for the submission.</description>

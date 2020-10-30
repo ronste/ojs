@@ -92,9 +92,6 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 			foreach ($content as $value) {
 			    $submissionChecklistHTML .= '<li>'.$value.'</li>';
 			}
-			
-			error_log("RS_DEBUG:".basename(__FILE__).":".__FUNCTION__.":??? ".print_r($submissionChecklist,true));
-			error_log("RS_DEBUG:".basename(__FILE__).":".__FUNCTION__.":??? ".print_r($submissionChecklistHTML,true));
 
 			$mail->assignParams(array(
 				'authorName' => $user->getFullName(),
@@ -103,6 +100,7 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 				'submissionUrl' => $router->url($request, null, 'authorDashboard', 'submission', $submission->getId()),
 			    //TODO RS see also mail template locale\en_US
 			    'accepted_submissionChecklist' => $submissionChecklistHTML,
+			    'accepted_copyrightNotice' => '<br /><u>Copyright Notice</u><br />'.$submission->getLocalizedData('accepted_copyrightNotice', $context->getPrimaryLocale()),
 			    'accepted_privacyStatement' => $submission->getLocalizedData('accepted_privacyStatement', $context->getPrimaryLocale())
 			));
 			
