@@ -82,6 +82,13 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 				}
 			}
 			$mail->bccAssignedSubEditors($submission->getId(), WORKFLOW_STAGE_ID_SUBMISSION);
+			
+			//prepare submission checklist array for mail template
+			$submissionChecklist = $submission->getLocalizedData('accepted_submissionChecklist', $context->getPrimaryLocale());
+			$submissionChecklistHTML = '';
+			foreach ($submissionChecklist as $value) {
+			    $submissionChecklistHTML .= '<li>'.$value.'</li>';
+			}
 
 			$mail->assignParams(array(
 				'authorName' => $user->getFullName(),
@@ -89,7 +96,7 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 				'editorialContactSignature' => $context->getSetting('contactName'),
 				'submissionUrl' => $router->url($request, null, 'authorDashboard', 'submission', $submission->getId()),
 			    //TODO RS see also mail template locale\en_US
-			    'accepted_submissionChecklist' => $submission->getLocalizedData('accepted_submissionChecklist', $context->getPrimaryLocale()),
+			    'accepted_submissionChecklist' => $submissionChecklistHTML,
 			    'accepted_privacyStatement' => $submission->getLocalizedData('accepted_privacyStatement', $context->getPrimaryLocale())
 			));
 			
