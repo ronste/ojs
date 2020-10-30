@@ -92,10 +92,11 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 			foreach ($content as $value) {
 			    $submissionChecklistHTML .= '<li>'.$value.'</li>';
 			}
-			$copyrightNoticeHTML = '';
+			$copyrightNotice = '';
 			if ($this->submission->getData('accepted_copyrightNotice')) {
-			    $copyrightNoticeHTML = '<br /><u>Copyright Notice</u><br />'.$submission->getLocalizedData('accepted_copyrightNotice', $context->getPrimaryLocale());
+			    $copyrightNotice = $submission->getLocalizedData('accepted_copyrightNotice', $context->getPrimaryLocale());
 			}
+			$privacyStatement = $submission->getLocalizedData('accepted_privacyStatement', $context->getPrimaryLocale());
 
 			$mail->assignParams(array(
 				'authorName' => $user->getFullName(),
@@ -104,11 +105,9 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 				'submissionUrl' => $router->url($request, null, 'authorDashboard', 'submission', $submission->getId()),
 			    //TODO RS see also mail template locale\en_US
 			    'accepted_submissionChecklist' => $submissionChecklistHTML,
-			    'accepted_copyrightNotice' => $copyrightNoticeHTML,
-			    'accepted_privacyStatement' => $submission->getLocalizedData('accepted_privacyStatement', $context->getPrimaryLocale())
+			    'accepted_copyrightNotice' => '<br /><u>Copyright Notice</u><br />'.$copyrightNotice,
+			    'accepted_privacyStatement' => $privacyStatement
 			));
-			
-			error_log("RS_DEBUG:".basename(__FILE__).":".__FUNCTION__.":??? ".print_r('<br /><u>Copyright Notice</u><br />'.$submission->getLocalizedData('accepted_copyrightNotice', $context->getPrimaryLocale()),true));
 			
 			$authorMail->assignParams(array(
 				'submitterName' => $user->getFullName(),
@@ -135,6 +134,11 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 		import('classes.log.SubmissionEventLogEntry'); // Constants
 		import('lib.pkp.classes.log.SubmissionLog');
 		SubmissionLog::logEvent($request, $submission, SUBMISSION_LOG_SUBMISSION_SUBMIT, 'submission.event.submissionSubmitted');
+		SubmissionLog::logEvent($request, $submission, SUBMISSION_LOG_CHECKLIST_ACCEPTED, 'submission.event.submissionChecklistAccepted', array('submissionChecklist' => $submissionChecklistHTML));
+		if ($this->submission->getData('accepted_copyrightNotice')) {
+		    SubmissionLog::logEvent($request, $submission, SUBMISSION_LOG_COPYRIGHT_ACCEPTED, 'submission.event.submissionCopyrightAccepted', array('copyrightNotice' => $copyrightNotice));
+		}
+		SubmissionLog::logEvent($request, $submission, SUBMISSION_LOG_PRIVACY_ACCEPTED, 'submission.event.submissionPrivacyAccepted', array('privacyStatement' => $privacyStatement));
 
 		return $this->submissionId;
 	}
