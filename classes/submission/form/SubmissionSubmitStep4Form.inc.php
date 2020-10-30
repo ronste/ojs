@@ -89,10 +89,10 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 				'editorialContactSignature' => $context->getSetting('contactName'),
 				'submissionUrl' => $router->url($request, null, 'authorDashboard', 'submission', $submission->getId()),
 			    //TODO RS see also mail template locale\en_US
-			    'accepted_submissionChecklist' => $context->getLocalizedSetting('accepted_submissionChecklist', $context->getPrimaryLocale()),
-			    'accepted_privacyStatement' => $context->getLocalizedSetting('accepted_privacyStatement', $context->getPrimaryLocale())
+			    'accepted_submissionChecklist' => $submission->getLocalizedData('accepted_submissionChecklist', $context->getPrimaryLocale()),
+			    'accepted_privacyStatement' => $submission->getLocalizedData('accepted_privacyStatement', $context->getPrimaryLocale())
 			));
-
+			
 			$authorMail->assignParams(array(
 				'submitterName' => $user->getFullName(),
 				'editorialContactSignature' => $context->getSetting('contactName'),
