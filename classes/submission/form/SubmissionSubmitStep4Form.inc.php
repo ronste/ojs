@@ -83,7 +83,7 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 			}
 			$mail->bccAssignedSubEditors($submission->getId(), WORKFLOW_STAGE_ID_SUBMISSION);
 			
-			//prepare submission checklist array for mail template
+			//prepare submission checklist array and copyright notice for mail template
 			$submissionChecklist = $submission->getLocalizedData('accepted_submissionChecklist', $context->getPrimaryLocale());
 			$submissionChecklistHTML = '';
 			$order = array_column($submissionChecklist, 'order');
@@ -91,6 +91,10 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 			array_multisort($order,$content);
 			foreach ($content as $value) {
 			    $submissionChecklistHTML .= '<li>'.$value.'</li>';
+			}
+			$copyrightNoticeHTML = '';
+			if ($this->submission->getData('accepted_copyrightNotice')) {
+			    $copyrightNoticeHTML = '<br /><u>Copyright Notice</u><br />'.$submission->getLocalizedData('accepted_copyrightNotice', $context->getPrimaryLocale());
 			}
 
 			$mail->assignParams(array(
@@ -100,9 +104,11 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 				'submissionUrl' => $router->url($request, null, 'authorDashboard', 'submission', $submission->getId()),
 			    //TODO RS see also mail template locale\en_US
 			    'accepted_submissionChecklist' => $submissionChecklistHTML,
-			    'accepted_copyrightNotice' => '<br /><u>Copyright Notice</u><br />'.$submission->getLocalizedData('accepted_copyrightNotice', $context->getPrimaryLocale()),
+			    'accepted_copyrightNotice' => $copyrightNoticeHTML,
 			    'accepted_privacyStatement' => $submission->getLocalizedData('accepted_privacyStatement', $context->getPrimaryLocale())
 			));
+			
+			error_log("RS_DEBUG:".basename(__FILE__).":".__FUNCTION__.":??? ".print_r('<br /><u>Copyright Notice</u><br />'.$submission->getLocalizedData('accepted_copyrightNotice', $context->getPrimaryLocale()),true));
 			
 			$authorMail->assignParams(array(
 				'submitterName' => $user->getFullName(),

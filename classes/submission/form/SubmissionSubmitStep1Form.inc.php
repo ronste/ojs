@@ -27,7 +27,7 @@ class SubmissionSubmitStep1Form extends PKPSubmissionSubmitStep1Form {
 	/**
 	 * Fetch the form.
 	 */
-	function fetch($request) {
+	function fetch($request, $template = NULL, $display = false) {
 		$roleDao = DAORegistry::getDAO('RoleDAO');
 		$user = $request->getUser();
 		$canSubmitAll = $roleDao->userHasRole($this->context->getId(), $user->getId(), ROLE_ID_MANAGER) ||

@@ -31,7 +31,7 @@ class SubmissionSubmitStep3Form extends PKPSubmissionSubmitStep3Form {
 	/**
 	 * @copydoc Form::fetch()
 	 */
-	function fetch($request) {
+	function fetch($request, $template = NULL, $display = false) {
 		$templateMgr = TemplateManager::getManager($request);
 		// get word count of the section
 		$sectionDao = DAORegistry::getDAO('SectionDAO');
