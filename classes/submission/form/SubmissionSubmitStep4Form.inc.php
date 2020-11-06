@@ -85,13 +85,14 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 			
 			//prepare submission checklist array and copyright notice for mail template
 			$submissionChecklist = $submission->getLocalizedData('accepted_submissionChecklist', $context->getPrimaryLocale());
-			$submissionChecklistHTML = '';
+			$submissionChecklistHTML = '<p><ul>';
 			$order = array_column($submissionChecklist, 'order');
 			$content = array_column($submissionChecklist, 'content');
 			array_multisort($order,$content);
 			foreach ($content as $value) {
 			    $submissionChecklistHTML .= '<li>'.$value.'</li>';
 			}
+			$submissionChecklistHTML .= '</ul></p>';
 			$copyrightNotice = '';
 			if ($this->submission->getData('accepted_copyrightNotice')) {
 			    $copyrightNotice = $submission->getLocalizedData('accepted_copyrightNotice', $context->getPrimaryLocale());
@@ -139,7 +140,7 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 		    SubmissionLog::logEvent($request, $submission, SUBMISSION_LOG_COPYRIGHT_ACCEPTED, 'submission.event.submissionCopyrightAccepted', array('copyrightNotice' => $copyrightNotice));
 		}
 		SubmissionLog::logEvent($request, $submission, SUBMISSION_LOG_PRIVACY_ACCEPTED, 'submission.event.submissionPrivacyAccepted', array('privacyStatement' => $privacyStatement));
-
+		
 		return $this->submissionId;
 	}
 }
