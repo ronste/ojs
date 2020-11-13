@@ -98,6 +98,17 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 			    $copyrightNotice = $submission->getLocalizedData('accepted_copyrightNotice', $context->getPrimaryLocale());
 			}
 			$privacyStatement = $submission->getLocalizedData('accepted_privacyStatement', $context->getPrimaryLocale());
+			
+			//check wehther submission is performed in LoginAS-scope
+			$session = Application::getRequest()->getSession();
+			$signedInAs = $session->getSessionVar('signedInAs');
+			$submittingUser = '';
+			if (isset($signedInAs) && !empty($signedInAs)) {
+			    $signedInAs = (int)$signedInAs;
+			    
+			    $userDao = DAORegistry::getDAO('UserDAO');
+			    $submittingUser = $userDao->getUserFullName($signedInAs);
+			}
 
 			$mail->assignParams(array(
 				'authorName' => $user->getFullName(),
@@ -105,9 +116,10 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 				'editorialContactSignature' => $context->getSetting('contactName'),
 				'submissionUrl' => $router->url($request, null, 'authorDashboard', 'submission', $submission->getId()),
 			    //TODO RS see also mail template locale\en_US
-			    'accepted_submissionChecklist' => $submissionChecklistHTML,
-			    'accepted_copyrightNotice' => '<br /><u>Copyright Notice</u><br />'.$copyrightNotice,
-			    'accepted_privacyStatement' => $privacyStatement
+			    'acceptedSubmissionChecklist' => $submissionChecklistHTML,
+			    'acceptedCopyrightNotice' => '<br /><u>Copyright Notice</u><br />'.$copyrightNotice,
+			    'acceptedPrivacyStatement' => $privacyStatement,
+			    'submittingUser' => $submittingUser
 			));
 			
 			$authorMail->assignParams(array(

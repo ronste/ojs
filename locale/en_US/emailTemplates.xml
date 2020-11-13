@@ -132,6 +132,9 @@ Thank you for submitting the manuscript, &quot;{$submissionTitle}&quot; to {$con
 <br />
 Submission URL: {$submissionUrl}<br />
 Username: {$authorUsername}<br />
+{if !$submitting_user}
+This manusript was submitted by {$submitting_user} in the name of {$authorName}.
+{/if} 
 <br />
 If you have any questions, please contact me. Thank you for considering this journal as a venue for your work.<br />
 <br />
@@ -139,9 +142,7 @@ If you have any questions, please contact me. Thank you for considering this jou
 <br />
 During submission you accepted the following terms and conditions:<br />
 <br /><u>Submission Requirements</u><br />
-<ul>
     {$accepted_submissionChecklist}
-</ul>
 {$accepted_copyrightNotice}
 <br /><u>Privacy Statement</u><br />
 {$accepted_privacyStatement}]]></body>
