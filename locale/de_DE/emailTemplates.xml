@@ -132,10 +132,18 @@ vielen Dank für die Einreichung Ihres Manuskript &quot;{$submissionTitle}&quot;
 <br />
 URL des Manuskripts: {$submissionUrl}<br />
 Benutzer/innenname: {$authorUsername}<br />
+{$submittingUserStatement}<br/>
 <br />
 Für weitere Fragen stehen wir Ihnen gern zur Verfügung. Danke für Ihr Interesse an einer Veröffentlichung in unserer Zeitschrift.<br />
 <br />
-{$editorialContactSignature}]]></body>
+{$editorialContactSignature}<br />
+<br />
+Während der Einrichung haben Sie folgende Bedingungen akzeptiert:<br />
+<br /><u>Einreichungs-Anforderungen</u><br />
+    {$acceptedSubmissionChecklist}
+{$acceptedCopyrightNotice}
+<br /><u>Datenschutzerklärung</u><br />
+{$acceptedPrivacyStatement}]]></body>
 		<description>Diese E-Mail wird, sofern aktiviert, automatisch an eine Autorin/einen Autor gesendet, wenn sie oder er den Einreichungsprozess eines Manuskripts für die Zeitschrift abgeschlossen hat. Sie liefert Informationen über das Verfolgen der Einreichung durch den Prozess hindurch und dankt der Autorin/dem Autor für die Einreichung.</description>
 	</email_text>
 	<email_text key="SUBMISSION_ACK_NOT_USER">

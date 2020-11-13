@@ -83,6 +83,10 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 			}
 			$mail->bccAssignedSubEditors($submission->getId(), WORKFLOW_STAGE_ID_SUBMISSION);
 			
+			//prepare for logging submission events
+			import('classes.log.SubmissionEventLogEntry'); // Constants
+			import('lib.pkp.classes.log.SubmissionLog');
+			
 			//prepare submission checklist array and copyright notice for mail template
 			$submissionChecklist = $submission->getLocalizedData('accepted_submissionChecklist', $context->getPrimaryLocale());
 			$submissionChecklistHTML = '<p><ul>';
@@ -99,15 +103,24 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 			}
 			$privacyStatement = $submission->getLocalizedData('accepted_privacyStatement', $context->getPrimaryLocale());
 			
-			//check wehther submission is performed in LoginAS-scope
+			//log acknowledgments
+			if ($this->submission->getData('accepted_copyrightNotice')) {
+			    SubmissionLog::logEvent($request, $submission, SUBMISSION_LOG_COPYRIGHT_ACCEPTED, 'submission.event.submissionCopyrightAccepted', array('copyrightNotice' => $copyrightNotice));
+			}
+			SubmissionLog::logEvent($request, $submission, SUBMISSION_LOG_PRIVACY_ACCEPTED, 'submission.event.submissionPrivacyAccepted', array('privacyStatement' => $privacyStatement));
+			SubmissionLog::logEvent($request, $submission, SUBMISSION_LOG_SUBMISSION_SUBMIT, 'submission.event.submissionSubmitted');
+			
+			//check wehther submission is performed in LoginAs-scope
 			$session = Application::getRequest()->getSession();
 			$signedInAs = $session->getSessionVar('signedInAs');
-			$submittingUser = '';
+			$submittingUserStatement = '';
 			if (isset($signedInAs) && !empty($signedInAs)) {
 			    $signedInAs = (int)$signedInAs;
 			    
 			    $userDao = DAORegistry::getDAO('UserDAO');
 			    $submittingUser = $userDao->getUserFullName($signedInAs);
+			    $submittingUserStatement = __('submission.event.submittingUserStatement',array('submittingUser' => $submittingUser,'authorName' => $user->getFullName()));
+			    SubmissionLog::logEvent($request, $submission, SUBMISSION_LOG_SUBMITTING_USER, 'submission.event.submittingUserStatement', array('submittingUser' => $submittingUser,'authorName' => $user->getFullName()));
 			}
 
 			$mail->assignParams(array(
@@ -115,11 +128,10 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 				'authorUsername' => $user->getUsername(),
 				'editorialContactSignature' => $context->getSetting('contactName'),
 				'submissionUrl' => $router->url($request, null, 'authorDashboard', 'submission', $submission->getId()),
-			    //TODO RS see also mail template locale\en_US
 			    'acceptedSubmissionChecklist' => $submissionChecklistHTML,
 			    'acceptedCopyrightNotice' => '<br /><u>Copyright Notice</u><br />'.$copyrightNotice,
 			    'acceptedPrivacyStatement' => $privacyStatement,
-			    'submittingUser' => $submittingUser
+			    'submittingUserStatement' => $submittingUserStatement
 			));
 			
 			$authorMail->assignParams(array(
@@ -144,14 +156,7 @@ class SubmissionSubmitStep4Form extends PKPSubmissionSubmitStep4Form {
 		}
 
 		// Log submission.
-		import('classes.log.SubmissionEventLogEntry'); // Constants
-		import('lib.pkp.classes.log.SubmissionLog');
-		SubmissionLog::logEvent($request, $submission, SUBMISSION_LOG_SUBMISSION_SUBMIT, 'submission.event.submissionSubmitted');
 		SubmissionLog::logEvent($request, $submission, SUBMISSION_LOG_CHECKLIST_ACCEPTED, 'submission.event.submissionChecklistAccepted', array('submissionChecklist' => $submissionChecklistHTML));
-		if ($this->submission->getData('accepted_copyrightNotice')) {
-		    SubmissionLog::logEvent($request, $submission, SUBMISSION_LOG_COPYRIGHT_ACCEPTED, 'submission.event.submissionCopyrightAccepted', array('copyrightNotice' => $copyrightNotice));
-		}
-		SubmissionLog::logEvent($request, $submission, SUBMISSION_LOG_PRIVACY_ACCEPTED, 'submission.event.submissionPrivacyAccepted', array('privacyStatement' => $privacyStatement));
 		
 		return $this->submissionId;
 	}
